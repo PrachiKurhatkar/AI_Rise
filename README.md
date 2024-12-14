@@ -1,4 +1,4 @@
-README for AI Industry Analysis SQL Project
+#AI Industry Analysis SQL Project
 
 Project Overview
 
