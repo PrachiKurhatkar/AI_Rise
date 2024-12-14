@@ -156,57 +156,6 @@ ORDER BY
 
 --------------- 15) Find the Top 3 Companies with the Most Patents Related to AI Technologies ---------
 
-SELECT 
-    c.company_name, 
-    COUNT(p.patent_id) AS Total_Patents
-FROM 
-    Company c
-INNER JOIN 
-    AI_Patent p ON c.company_id = p.company_id
-GROUP BY 
-    c.company_name
-ORDER BY 
-    Total_Patents DESC
-OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY;
-
-SELECT c.company_name, t.program_name, i.impact_area, i.result
-FROM Company c
-INNER JOIN AI_Training_Programs t ON c.company_id = t.company_id
-INNER JOIN AI_Impact i ON c.company_id = i.company_id
-ORDER BY c.company_name;
-
-
-
-
-
-SELECT c.company_name, t.program_name, DATEDIFF(day, t.training_start_date, t.training_end_date) AS program_duration
-FROM Company c
-INNER JOIN AI_Training_Programs t ON c.company_id = t.company_id
-INNER JOIN Industry i ON c.industry_id = i.industry_id
-WHERE DATEDIFF(day, t.training_start_date, t.training_end_date) > (
-    SELECT AVG(DATEDIFF(day, t2.training_start_date, t2.training_end_date))
-    FROM AI_Training_Programs t2
-    INNER JOIN Company c2 ON t2.company_id = c2.company_id
-    WHERE c2.industry_id = c.industry_id
-)
-ORDER BY program_duration DESC;
-
-SELECT t.technology_name, COUNT(tp.program_id) AS total_programs
-FROM AI_Technologies t
-JOIN AI_Training_Programs tp ON t.tech_id = tp.company_id
-GROUP BY t.technology_name
-ORDER BY total_programs DESC;
-
-SELECT i.industry_name, c.company_name, c.ai_investment
-FROM Company c
-INNER JOIN Industry i ON c.industry_id = i.industry_id
-WHERE c.ai_investment = (
-    SELECT MAX(c2.ai_investment)
-    FROM Company c2
-    WHERE c2.industry_id = c.industry_id
-)
-ORDER BY c.ai_investment DESC;
-
 SELECT c.company_name, i.industry_name, c.ai_investment
 FROM Company c
 INNER JOIN Industry i ON c.industry_id = i.industry_id
@@ -216,17 +165,3 @@ WHERE c.ai_investment > (
     WHERE c2.industry_id = c.industry_id
 )
 ORDER BY c.ai_investment DESC;
-
-SELECT i.industry_name, AVG(c.ai_investment) AS avg_investment, 
-       (SELECT AVG(ai_investment) FROM Company) AS global_avg_investment
-FROM Industry i
-INNER JOIN Company c ON i.industry_id = c.industry_id
-GROUP BY i.industry_name
-HAVING AVG(c.ai_investment) > (SELECT AVG(ai_investment) FROM Company)
-ORDER BY avg_investment DESC;
-
-
-
-
-
-
